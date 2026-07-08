@@ -39,17 +39,41 @@
       opacity: 1;
     }
 
-    #message p {
+    #message .name {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: #ff8fab;
+      text-shadow: 0 0 25px rgba(255, 107, 157, 0.5);
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    #message .divider {
+      width: 50px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #ffb3c6, transparent);
+      margin: 0 auto 20px;
+    }
+
+    #message .text {
       font-family: 'Ma Shan Zheng', serif;
-      font-size: 1.8rem;
-      color: #ffb3c6;
-      text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
-      letter-spacing: 3px;
+      font-size: 1.5rem;
+      color: #ffd6e0;
+      text-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+      letter-spacing: 4px;
       line-height: 2;
     }
 
+    #message .text .highlight {
+      color: #ff8fab;
+      font-size: 1.7rem;
+    }
+
     @media (max-width: 768px) {
-      #message p { font-size: 1.3rem; letter-spacing: 2px; }
+      #message .name { font-size: 2rem; }
+      #message .text { font-size: 1.15rem; letter-spacing: 3px; }
+      #message .text .highlight { font-size: 1.3rem; }
     }
   </style>
 </head>
@@ -58,7 +82,9 @@
   <canvas id="heartCanvas"></canvas>
 
   <div id="message">
-    <p>潘姐姐，上班再忙也要记得好好吃饭</p>
+    <div class="name">Pan Jie Jie</div>
+    <div class="divider"></div>
+    <div class="text">潘姐姐<br><span class="highlight">好好吃饭</span>，不许饿着</div>
   </div>
 
   <script>
