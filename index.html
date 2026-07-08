@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Dancing+Script:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: linear-gradient(135deg, #1a1120 0%, #2d1b2e 100%);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    #heartCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+
+    #message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity 2s ease;
+      pointer-events: none;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    #message.show {
+      opacity: 1;
+    }
+
+    #message p {
+      font-family: 'Ma Shan Zheng', serif;
+      font-size: 1.8rem;
+      color: #ffb3c6;
+      text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+      letter-spacing: 3px;
+      line-height: 2;
+    }
+
+    @media (max-width: 768px) {
+      #message p { font-size: 1.3rem; letter-spacing: 2px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="heartCanvas"></canvas>
+
+  <div id="message">
+    <p>上班再忙也要记得好好吃饭</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('heartCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let startTime = Date.now();
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      initParticles();
+    });
+
+    // 心形参数方程
+    function heartPoint(t, scale) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+      return { x: x * scale, y: y * scale };
+    }
+
+    function initParticles() {
+      particles = [];
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const scale = Math.min(canvas.width, canvas.height) / 36;
+      const count = 400;
+
+      for (let i = 0; i < count; i++) {
+        const t = (i / count) * Math.PI * 2;
+        const pt = heartPoint(t, scale);
+        particles.push({
+          x: cx + (Math.random() - 0.5) * canvas.width * 1.5,
+          y: cy + (Math.random() - 0.5) * canvas.height * 1.5,
+          tx: cx + pt.x,
+          ty: cy + pt.y,
+          vx: 0,
+          vy: 0,
+          size: Math.random() * 2.5 + 1,
+          color: `rgba(255, ${100 + Math.random() * 80}, ${130 + Math.random() * 70}, ${0.5 + Math.random() * 0.5})`
+        });
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = 'rgba(26, 17, 32, 0.12)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let p of particles) {
+        const dx = p.tx - p.x;
+        const dy = p.ty - p.y;
+
+        p.vx += dx * 0.003;
+        p.vy += dy * 0.003;
+        p.vx *= 0.95;
+        p.vy *= 0.95;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // 到位后微微抖动
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 2) {
+          p.x = p.tx + (Math.random() - 0.5) * 1;
+          p.y = p.ty + (Math.random() - 0.5) * 1;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      }
+
+      // 2秒后显示文字
+      if (Date.now() - startTime > 2000) {
+        document.getElementById('message').classList.add('show');
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    initParticles();
+    animate();
+  </script>
+</body>
+</html>
